@@ -48,13 +48,31 @@ export class HomeComponent implements OnInit {
   }
 
   defaultData() {
+    this.isJobQueueLoading = false;
+    this.isJobAdviceQueueLoading = false;
     this.globalError = '';
+    this.defaultJobQueue();
+    this.defaultJobAdviceQueue();
+    this.defaultJobQueueResult();
+    this.defaultJobAdviceQueueResult();
+    this.defaultInputForm();
+  }
 
+  defaultJobQueue() {
     this.jobQueue = {
       message: '',
       jobId: '',
     };
+  }
 
+  defaultJobAdviceQueue() {
+    this.jobAdviceQueue = {
+      message: '',
+      jobId: '',
+    };
+  }
+
+  defaultJobQueueResult() {
     this.jobQueueResult = {
       status: '',
       waitingCount: 0,
@@ -65,7 +83,22 @@ export class HomeComponent implements OnInit {
         createdAt: '',
       }
     };
+  }
 
+  defaultJobAdviceQueueResult() {
+    this.jobAdviceQueueResult = {
+      status: '',
+      waitingCount: 0,
+      response: {
+        username: '',
+        lang: '',
+        result: '',
+        createdAt: '',
+      }
+    };
+  }
+
+  defaultInputForm() {
     this.inputForm = {
       username: '',
       lang: 'indonesian',
@@ -121,6 +154,10 @@ export class HomeComponent implements OnInit {
   // Function to create job queue
   createJobQueue() {
     this.globalError = '';
+    this.defaultJobQueue();
+    this.defaultJobAdviceQueue();
+    this.defaultJobQueueResult();
+    this.defaultJobAdviceQueueResult();
     if (!this.validateInputForm()) {
       return;
     }
@@ -132,8 +169,13 @@ export class HomeComponent implements OnInit {
         this.getJobQueue();
       },
       (error: any) => {
-        console.log(error);
-        this.globalError = error.error.error ?? error.error ?? "An unknown error occurred, please try again later.";
+        console.log("Error create job queue", error);
+        // Handle different error formats:
+        this.globalError = error?.error?.error
+          || error?.error?.message // Check for common message properties
+          || error?.message
+          || error?.statusText // For HTTP errors
+          || "An unknown error occurred. Please try again later.";
         this.isJobQueueLoading = false;
         this.notificationService.showNotification('error', 'Error!', this.globalError);
       }
@@ -167,7 +209,11 @@ export class HomeComponent implements OnInit {
       },
         (error: any) => {
           console.error('Error fetching job queue:', error);
-          this.globalError = error.error.error ?? error.error ?? "An unknown error occurred, please try again later.";
+          this.globalError = error?.error?.error
+            || error?.error?.message // Check for common message properties
+            || error?.message
+            || error?.statusText // For HTTP errors
+            || "An unknown error occurred. Please try again later.";
           this.isJobQueueLoading = false;
           this.notificationService.showNotification('error', 'Error!', this.globalError);
         });
@@ -194,7 +240,11 @@ export class HomeComponent implements OnInit {
         this.getJobAdviceQueue();
       },
       (error: any) => {
-        this.globalError = error.error.error ?? error.error ?? "An unknown error occurred, please try again later.";
+        this.globalError = error?.error?.error
+          || error?.error?.message // Check for common message properties
+          || error?.message
+          || error?.statusText // For HTTP errors
+          || "An unknown error occurred. Please try again later.";
         this.isJobAdviceQueueLoading = false;
         this.notificationService.showNotification('error', 'Error!', this.globalError);
       }
@@ -228,10 +278,14 @@ export class HomeComponent implements OnInit {
       },
         (error: any) => {
           console.error('Error fetching job advice queue:', error);
-          this.globalError = error.error.error ?? error.error ?? "An unknown error occurred, please try again later.";
+          this.globalError = error?.error?.error
+            || error?.error?.message // Check for common message properties
+            || error?.message
+            || error?.statusText // For HTTP errors
+            || "An unknown error occurred. Please try again later.";
           this.isJobAdviceQueueLoading = false;
           this.notificationService.showNotification('error', 'Error!', this.globalError);
-      });
+        });
   }
 
   // Function to get history

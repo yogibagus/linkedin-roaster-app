@@ -20,7 +20,7 @@ export class GlobalService {
     return this.http.get(this.apiUrl + path, {
       params: payloads,
     }).pipe(timeout(30000), catchError((error) => {
-      return error;
+      return throwError(error);
     }
     ));
   }
@@ -30,7 +30,7 @@ export class GlobalService {
    */
   DataPost(path: any, payloads = {}) {
     return this.http.post(this.apiUrl + path, payloads).pipe(timeout(30000), catchError((error) => {
-      return error;
+      return throwError(error);
     }
     ));
   }
@@ -40,7 +40,7 @@ export class GlobalService {
    */
   DataPut(path: any, payloads = {}) {
     return this.http.put(this.apiUrl + path, payloads).pipe(timeout(30000), catchError((error) => {
-      return error;
+      return throwError(error);
     }
     ));
   }
@@ -52,7 +52,7 @@ export class GlobalService {
     return this.http.delete(this.apiUrl + path, {
       params: payloads,
     }).pipe(timeout(30000), catchError((error) => {
-      return error;
+      return throwError(error);
     }
     ));
   }
