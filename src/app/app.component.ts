@@ -7,4 +7,11 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'project';
+
+  // set default theme in local storage
+  constructor() {
+    if (!localStorage.getItem('theme')) {
+      localStorage.setItem('theme', 'dark');
+    }
+  }
 }
