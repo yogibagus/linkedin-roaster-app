@@ -19,8 +19,8 @@ export class GlobalService {
   DataGet(path: any, payloads = {}) {
     return this.http.get(this.apiUrl + path, {
       params: payloads,
-    }).pipe(timeout(15000), catchError((error) => {
-      return throwError('Request Timeout');
+    }).pipe(timeout(30000), catchError((error) => {
+      return error;
     }
     ));
   }
@@ -29,8 +29,8 @@ export class GlobalService {
    * Request POST
    */
   DataPost(path: any, payloads = {}) {
-    return this.http.post(this.apiUrl + path, payloads).pipe(timeout(15000), catchError((error) => {
-      return throwError('Request Timeout');
+    return this.http.post(this.apiUrl + path, payloads).pipe(timeout(30000), catchError((error) => {
+      return error;
     }
     ));
   }
@@ -39,8 +39,8 @@ export class GlobalService {
    * Request PUT
    */
   DataPut(path: any, payloads = {}) {
-    return this.http.put(this.apiUrl + path, payloads).pipe(timeout(15000), catchError((error) => {
-      return throwError('Request Timeout');
+    return this.http.put(this.apiUrl + path, payloads).pipe(timeout(30000), catchError((error) => {
+      return error;
     }
     ));
   }
@@ -51,8 +51,8 @@ export class GlobalService {
   DataDelete(path: any, payloads = {}) {
     return this.http.delete(this.apiUrl + path, {
       params: payloads,
-    }).pipe(timeout(15000), catchError((error) => {
-      return throwError('Request Timeout');
+    }).pipe(timeout(30000), catchError((error) => {
+      return error;
     }
     ));
   }

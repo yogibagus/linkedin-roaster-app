@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { NotificationService } from '../services/notification.service';
 import { HomeService } from './service/home.service';
 import { VERSION } from '@angular/core';
+import { OnDestroy } from '@angular/core';
+import { Subject, timer, takeUntil, switchMap } from 'rxjs';
 
 @Component({
   selector: 'app-home',
@@ -24,14 +26,15 @@ export class HomeComponent implements OnInit {
   historyData: any = []; // history data
 
   globalError: string = ''; // global error
-  
-  checkService: any = {
+
+  checkService: any = { // check service status
     status: 'neutral',
     message: 'Idle'
   }
 
   test: any;
 
+  private ngUnsubscribe = new Subject<void>(); // unsubscribe subject
 
 
   constructor(public notificationService: NotificationService, private homeService: HomeService) { }
@@ -108,7 +111,7 @@ export class HomeComponent implements OnInit {
       return false;
     }
 
-    if(this.checkContainHttp(this.inputForm.username)) {
+    if (this.checkContainHttp(this.inputForm.username)) {
       this.notificationService.showNotification('error', 'Ops!', 'Please input the correct username without URL');
       return false;
     }
@@ -129,40 +132,50 @@ export class HomeComponent implements OnInit {
         this.getJobQueue();
       },
       (error: any) => {
-        this.globalError = error.error.error;
+        console.log(error);
+        this.globalError = error.error.error ?? error.error ?? "An unknown error occurred, please try again later.";
         this.isJobQueueLoading = false;
-        this.notificationService.showNotification('error', 'Error!', error.error.error);
+        this.notificationService.showNotification('error', 'Error!', this.globalError);
       }
     );
   }
 
   // Function to get job queue
+
   getJobQueue() {
-    var params = this.jobQueue.jobId;
-    this.homeService.getJobQueue(params).subscribe(
-      (res: any) => {
-        console.log(res);
-        this.jobQueueResult = res;
-        if (res.status === 'completed') {
-          this.isJobQueueLoading = false;
-        } else if (res.status === 'failed') {
-          this.globalError = res.error
-          this.notificationService.showNotification('error', 'Error!', res.error);
-          this.isJobQueueLoading = false
-        } else if (res.status === 'waiting' || res.status === 'active' || res.status === 'delayed' || res.status === 'stuck') {
-          // console.log(this.jobQueueResponse);
-          setTimeout(() => {
-            this.getJobQueue();
-          }, 2000);
-        }
+    this.homeService.getJobQueue(this.jobQueue.jobId)
+      .pipe(
+        takeUntil(this.ngUnsubscribe),
+        switchMap((res: any) => {
+          this.jobQueueResult = res;
+          if (res.status === 'completed') {
+            this.isJobQueueLoading = false;
+            return []; // No further requests needed
+          } else if (res.status === 'failed') {
+            this.globalError = res.error;
+            this.isJobQueueLoading = false;
+            this.notificationService.showNotification('error', 'Error!', res.error);
+            return []; // No further requests needed
+          } else {
+            return timer(2000); // Retry after 2 seconds
+          }
+        })
+      )
+      .subscribe(() => {
+        // Handle retries here
+        this.getJobQueue();
       },
-      (error: any) => {
-        console.log(error);
-        this.globalError = error.error.error;
-        this.isJobQueueLoading = false;
-        this.notificationService.showNotification('error', 'Error!', error.error.error);
-      }
-    );
+        (error: any) => {
+          console.error('Error fetching job queue:', error);
+          this.globalError = error.error.error ?? error.error ?? "An unknown error occurred, please try again later.";
+          this.isJobQueueLoading = false;
+          this.notificationService.showNotification('error', 'Error!', this.globalError);
+        });
+  }
+
+  ngOnDestroy() {
+    this.ngUnsubscribe.next();
+    this.ngUnsubscribe.complete();
   }
 
   // Function to create job advice queue
@@ -181,38 +194,44 @@ export class HomeComponent implements OnInit {
         this.getJobAdviceQueue();
       },
       (error: any) => {
-        this.globalError = error.error.error;
+        this.globalError = error.error.error ?? error.error ?? "An unknown error occurred, please try again later.";
         this.isJobAdviceQueueLoading = false;
-        this.notificationService.showNotification('error', 'Error!', error.error.error);
+        this.notificationService.showNotification('error', 'Error!', this.globalError);
       }
     );
   }
 
   // Function to get job advice queue
   getJobAdviceQueue() {
-    var params = this.jobAdviceQueue.jobId;
-    this.homeService.getJobAdviceQueue(params).subscribe(
-      (res: any) => {
-        this.jobAdviceQueueResult = res;
-        if (res.status === 'completed') {
-          this.isJobAdviceQueueLoading = false;
-        } else if (res.status === 'failed') {
-          this.globalError = res.error
-          this.notificationService.showNotification('error', 'Error!', res.error);
-          this.isJobAdviceQueueLoading = false
-        } else if (res.status === 'waiting' || res.status === 'active' || res.status === 'delayed' || res.status === 'stuck') {
-          setTimeout(() => {
-            this.getJobAdviceQueue();
-          }, 2000);
-        }
+    this.homeService.getJobAdviceQueue(this.jobAdviceQueue.jobId)
+      .pipe(
+        takeUntil(this.ngUnsubscribe),
+        switchMap((res: any) => {
+          console.log('Job Advice Queue Response:', res);
+          this.jobAdviceQueueResult = res;
+
+          if (res.status === 'completed') {
+            this.isJobAdviceQueueLoading = false;
+            return [];
+          } else if (res.status === 'failed') {
+            this.globalError = res.error;
+            this.isJobAdviceQueueLoading = false;
+            this.notificationService.showNotification('error', 'Error!', res.error);
+            return [];
+          } else {
+            return timer(2000);
+          }
+        })
+      )
+      .subscribe(() => {
+        this.getJobAdviceQueue();
       },
-      (error: any) => {
-        console.log(error);
-        this.globalError = error.error.error;
-        this.isJobAdviceQueueLoading = false;
-        this.notificationService.showNotification('error', 'Error!', error.error.error);
-      }
-    );
+        (error: any) => {
+          console.error('Error fetching job advice queue:', error);
+          this.globalError = error.error.error ?? error.error ?? "An unknown error occurred, please try again later.";
+          this.isJobAdviceQueueLoading = false;
+          this.notificationService.showNotification('error', 'Error!', this.globalError);
+      });
   }
 
   // Function to get history
@@ -222,8 +241,9 @@ export class HomeComponent implements OnInit {
         this.historyData = res;
       },
       (error: any) => {
-        console.log(error);
-        this.notificationService.showNotification('error', 'Error!', error.error.error);
+        console.log("Error get history", error);
+        var errorLog = error.error.error ?? error.error ?? "An unknown error occurred, please try again later.";
+        this.notificationService.showNotification('error', 'Error!', errorLog);
       }
     );
   }
