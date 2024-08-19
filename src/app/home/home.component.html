@@ -1,3 +1,7 @@
+<!-- Confetti -->
+<div class="fixed inset-0 z-50 h-screen overflow-hidden flex justify-center items-center scale-150" *ngIf="isConfetti">
+  <dotlottie-player src="https://lottie.host/565d6ebf-5515-49f7-bda8-253f61f89f41/qcwxGv9r0O.json" background="transparent" speed="1" style="width: 1000px; height: 1000px" direction="1" playMode="normal" autoplay></dotlottie-player>
+</div>
 <!--  Container tailwindcss -->
 <div class="container mx-auto">
   <div class="flex flex-col justify-center items-center"
@@ -29,14 +33,16 @@
         </li>
       </ul>
 
-
       <div class="card-body">
-        <h1 class="text-4xl md:text-5xl sm:text-3xl font-bold text-center">
+        <h1 class="text-4xl xl:text-6xl lg:text-5xl md:text-5xl sm:text-4xl font-bold text-center bg-gradient-to-r from-purple-200 via-blue-500 to-green-400  bg-clip-text text-transparent">
           {{ title }}
         </h1>
         <p class="text-center">
           {{ description }}
         </p>
+        <div class="flex justify-center items-center transform hover:scale-105 transition duration-300" *ngIf="historyData?.data?.totalItems > 0">
+          <p class="btn btn-xs max-w-40" (click)="showTotalRoasted();showConfetti()">Roasted {{ historyData?.data?.totalItems }} times</p>
+        </div>
         <!-- form and button -->
         <div class="flex flex-col md:flex-row items-center justify-center mt-3 gap-3">
           <div class="join w-full md:w-auto flex flex-col md:flex-row items-center gap-3">
@@ -48,13 +54,13 @@
                 <option value="indonesian">Indonesia</option>
                 <option value="english">English</option>
               </select>
-              <button class="btn" (click)="createJobQueue()" [disabled]="isJobQueueLoading">
+              <button (click)="createJobQueue()" [disabled]="isJobQueueLoading || isJobAdviceQueueLoading" class="btn transform hover:scale-105 transition duration-300">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
                   <path fill-rule="evenodd"
                     d="M13.5 4.938a7 7 0 1 1-9.006 1.737c.202-.257.59-.218.793.039.278.352.594.672.943.954.332.269.786-.049.773-.476a5.977 5.977 0 0 1 .572-2.759 6.026 6.026 0 0 1 2.486-2.665c.247-.14.55-.016.677.238A6.967 6.967 0 0 0 13.5 4.938ZM14 12a4 4 0 0 1-4 4c-1.913 0-3.52-1.398-3.91-3.182-.093-.429.44-.643.814-.413a4.043 4.043 0 0 0 1.601.564c.303.038.531-.24.51-.544a5.975 5.975 0 0 1 1.315-4.192.447.447 0 0 1 .431-.16A4.001 4.001 0 0 1 14 12Z"
                     clip-rule="evenodd" />
                 </svg>
-                Roast It! 
+                Roast It!
                 <span class="loading loading-spinner loading-sm" *ngIf="isJobQueueLoading"></span>
               </button>
             </div>
@@ -62,15 +68,14 @@
         </div>
       </div>
       <!-- loader -->
-      <div class="flex flex-col justify-center items-center" *ngIf="isJobQueueLoading">
-        <span class="loading loading-dots loading-md"></span>
+      <div class="flex justify-center items-center" *ngIf="isJobQueueLoading">
         <p class="btn btn-sm" *ngIf="jobQueueResult.status === 'active'">Processing...</p>
         <p class="btn btn-sm" *ngIf="jobQueueResult.status !== 'active' && jobQueueResult.status !== 'completed'">You
           are in the queue <span class="badge badge-sm badge-warning">{{ jobQueueResult.waitingCount }}</span>
       </div>
 
       <!-- Error message -->
-      <div class="alert bg-red-50 border border-red-400 text-red-700 p-3 rounded-md mt-1 transition duration-500"
+      <!-- <div class="alert bg-red-50 border border-red-400 text-red-700 p-3 rounded-md mt-1 transition duration-500"
         *ngIf="globalError !== ''">
         <span>
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" class="size-5">
@@ -79,7 +84,7 @@
               clip-rule="evenodd" />
           </svg>
         </span> {{ globalError }}
-      </div>
+      </div> -->
     </div>
     <!-- footer -->
     <footer class="text-center" [ngClass]="{ 'hidden': jobQueueResult.status === 'completed' }">
@@ -118,6 +123,8 @@
         </button>
       </div>
     </div>
+
+  
 
     <app-notification [showNotification]="notificationService.notification$ | async"
       [notificationType]="(notificationService.notification$ | async)?.type"

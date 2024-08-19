@@ -12,7 +12,7 @@ import { Subject, timer, takeUntil, switchMap } from 'rxjs';
 })
 export class HomeComponent implements OnInit {
   title = 'Linkedin Roaster App';
-  description = 'Get your LinkedIn profile roasted! The LinkedIn Roaster App delivers sharp, no-nonsense feedback that’ll turn your profile from basic toblazing. Dare to get roasted?!';
+  description = 'Get your LinkedIn profile roasted! The LinkedIn Roaster App delivers sharp, no-nonsense feedback that’ll turn your profile from basic to blazing. Dare to get roasted?!';
 
   jobQueue: any = {}; // response from create job queue
   jobQueueResult: any = {}; // response from get job queue
@@ -23,7 +23,7 @@ export class HomeComponent implements OnInit {
   isJobQueueLoading: boolean = false; // loading state
   isJobAdviceQueueLoading: boolean = false; // loading state for advice
 
-  historyData: any = []; // history data
+  historyData: any = {}; // history data
 
   globalError: string = ''; // global error
 
@@ -31,6 +31,8 @@ export class HomeComponent implements OnInit {
     status: 'neutral',
     message: 'Idle'
   }
+
+  isConfetti: boolean = false; // confetti state
 
   test: any;
 
@@ -42,6 +44,7 @@ export class HomeComponent implements OnInit {
   ngOnInit(): void {
     this.defaultData();
     this.checkServiceStatus();
+    this.getHistory();
     // this.exampleData2();
     console.log("version", VERSION.full);
     // this.exampleData();
@@ -104,6 +107,9 @@ export class HomeComponent implements OnInit {
       lang: 'indonesian',
     };
   }
+
+
+    
 
   exampleData() {
     this.jobQueueResult = {
@@ -192,6 +198,8 @@ export class HomeComponent implements OnInit {
           this.jobQueueResult = res;
           if (res.status === 'completed') {
             this.isJobQueueLoading = false;
+            this.showConfetti();
+            this.notificationService.showNotification('success', 'Success!', 'Your profile has been roasted! 🔥');
             return []; // No further requests needed
           } else if (res.status === 'failed') {
             this.globalError = res.error;
@@ -262,6 +270,8 @@ export class HomeComponent implements OnInit {
 
           if (res.status === 'completed') {
             this.isJobAdviceQueueLoading = false;
+            this.showConfetti();
+            this.notificationService.showNotification('success', 'Success!', 'Advice has been generated! 🧠');
             return [];
           } else if (res.status === 'failed') {
             this.globalError = res.error;
@@ -324,6 +334,18 @@ export class HomeComponent implements OnInit {
       }
     );
   }
+
+  showTotalRoasted() {
+    this.notificationService.showNotification("info", "Yay!", "Total roasted " + this.historyData.data.totalItems + ", thank you for being roasted! 🔥💀");
+  }
+
+  showConfetti() {
+    this.isConfetti = true;
+    setTimeout(() => {
+      this.isConfetti = false;
+    }, 3000);
+  }
+
 
   showSuccessNotification() {
     this.notificationService.showNotification(

@@ -1,21 +1,27 @@
-<div *ngIf="showNotification"
-  class="fixed top-10 left-0 p-3 rounded-md shadow-md w-full md:max-w-sm md:left-auto md:right-10 border" [ngClass]="{
-    'bg-green-100 border-green-300': notificationType === 'success',
-    'bg-red-100 border-red-300': notificationType === 'error'
+<aside *ngIf="showNotification" class="fixed top-4 end-4 z-50 flex items-center justify-center gap-4 rounded-lg bg-secondary-content px-5 py-3 text-base-content border ml-4 lg:m-w-2/4" [ngClass]="{
+    'border-success': notificationType === 'success',
+    'border-error': notificationType === 'error'
   }">
-  <div class="flex items-center justify-between">
-    <div class="flex items-center">
-      <div class="font-medium text-gray-800 text-lg">
-        {{ title }}
+  <a href="#" target="_blank" rel="noreferrer" class="text-sm font-medium hover:opacity-75" [ngClass]="{
+      'text-success': notificationType === 'success',
+      'text-error': notificationType === 'error'
+    }">
+    <div class="flex items-center gap-2">
+      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-4">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v3.75m9-.75a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9 3.75h.008v.008H12v-.008Z" />
+      </svg>
+      <div>
+        <span class="font-bold">{{ title }}</span> {{ message }}
       </div>
     </div>
-    <button (click)="closeNotification()" class="text-gray-500">
-      <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
-      </svg>
-    </button>
-  </div>
-  <p class="mt-1 text-gray-600">
-    {{ message}}
-  </p>
-</div>
+  </a>
+
+  <button (click)="closeNotification()" class="rounded bg-base-100 p-1 hover:bg-base-200">
+    <span class="sr-only">Close</span>
+    <svg xmlns="http://www.w3.org/2000/svg" class="size-4" viewBox="0 0 20 20" fill="currentColor">
+      <path fillRule="evenodd"
+        d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"
+        clipRule="evenodd" />
+    </svg>
+  </button>
+</aside>
