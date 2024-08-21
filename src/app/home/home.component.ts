@@ -36,12 +36,17 @@ export class HomeComponent implements OnInit {
 
   test: any;
 
+  currentTheme = "dark";
+  svgSunClass = "";
+  svgMoonClass = "";
+
   private ngUnsubscribe = new Subject<void>(); // unsubscribe subject
 
 
   constructor(public notificationService: NotificationService, private homeService: HomeService) { }
 
   ngOnInit(): void {
+    this.getThemePreference();
     this.defaultData();
     this.checkServiceStatus();
     this.getHistory();
@@ -108,9 +113,6 @@ export class HomeComponent implements OnInit {
     };
   }
 
-
-    
-
   exampleData() {
     this.jobQueueResult = {
       status: 'success',
@@ -133,6 +135,36 @@ export class HomeComponent implements OnInit {
         createdAt: "8/19/2024, 1:31:15 PM"
       }
     }
+  }
+
+  // get theme preference from local storage
+  getThemePreference() {
+    const theme = localStorage.getItem('theme');
+    console.log("theme", theme);
+    if (theme === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else if (theme === 'light') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else {
+      // default theme
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    this.currentTheme = document.documentElement.getAttribute('data-theme') ?? '';
+  }
+
+  // handle theme
+  toggleTheme() {
+    if (document.documentElement.getAttribute('data-theme') === 'dark') {
+      document.documentElement.setAttribute('data-theme', 'light');
+    } else if (document.documentElement.getAttribute('data-theme') === 'light') {
+      document.documentElement.setAttribute('data-theme', 'dark');
+    } else {
+      // default theme
+      document.documentElement.setAttribute('data-theme', 'dark');
+    }
+    this.currentTheme = document.documentElement.getAttribute('data-theme') ?? '';
+    // Save theme preference to local storage
+    localStorage.setItem('theme', this.currentTheme);
   }
 
   // check string contain https or http, then return true
