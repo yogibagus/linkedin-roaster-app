@@ -83,7 +83,7 @@
       </div>
 
       <!-- notification -->
-       <div class="p-3 my-5 text-sm bg-base-200 text-base-content rounded-xl border border-accent shadow-xl">
+       <div class="p-3 mt-5 text-sm bg-base-200 text-base-content rounded-xl border border-accent shadow-xl">
         <div class="flex gap-2">
           <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" width="20" height="20">
             <path stroke-linecap="round" stroke-linejoin="round" d="m11.25 11.25.041-.02a.75.75 0 0 1 1.063.852l-.708 2.836a.75.75 0 0 0 1.063.853l.041-.021M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Zm-9-3.75h.008v.008H12V8.25Z" />
@@ -93,10 +93,10 @@
        </div>
 
       <div class="card-body">
-        <h1 class="text-5xl xl:text-6xl lg:text-5xl md:text-5xl sm:text-4xl font-bold text-center bg-gradient-to-r from-purple-300 via-blue-400 to-green-400  bg-clip-text text-transparent">
+        <h1 class="text-4xl xl:text-6xl lg:text-5xl md:text-5xl sm:text-5xl font-bold text-center bg-gradient-to-r from-purple-300 via-blue-400 to-green-400  bg-clip-text text-transparent">
           {{ title }}
         </h1>
-        <p class="text-center">
+        <p class="text-center text-sm">
           {{ description }}
         </p>
         <div class="flex justify-center items-center transform hover:scale-105 transition duration-300" *ngIf="historyData?.data?.totalItems > 0">
