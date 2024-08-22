@@ -210,7 +210,7 @@
     <!-- <button (click)="showSuccessNotification()">Sukses</button> -->
   </div>
   <!-- footer -->
-  <footer class="text-center mt-5 mb-5" [ngClass]="{ 'hidden': jobQueueResult.status !== 'completed' }">
+  <footer class="text-center mt-5 mb-5 print:hidden" [ngClass]="{ 'hidden': jobQueueResult.status !== 'completed' }">
     <p class="text-sm text-gray-500">© 2024 | <a href="" class="text-blue-500">Yogi Bagus</a></p>
   </footer>
 </div>

@@ -1,4 +1,4 @@
-<aside *ngIf="showNotification" class="fixed top-4 end-4 z-50 flex items-center justify-center gap-4 rounded-lg bg-secondary-content px-5 py-3 text-base-content border ml-4 lg:m-w-2/4" [ngClass]="{
+<aside *ngIf="showNotification" class="fixed top-4 end-4 z-50 flex items-center justify-center gap-4 rounded-lg bg-secondary-content px-5 py-3 text-base-content border ml-4 lg:m-w-2/4 print:hidden" [ngClass]="{
     'border-success': notificationType === 'success',
     'border-error': notificationType === 'error'
   }">

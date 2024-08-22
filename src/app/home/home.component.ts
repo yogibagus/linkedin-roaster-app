@@ -231,6 +231,7 @@ export class HomeComponent implements OnInit {
           if (res.status === 'completed') {
             this.isJobQueueLoading = false;
             this.showConfetti();
+            this.getHistory();
             this.notificationService.showNotification('success', 'Success!', 'Your profile has been roasted! 🔥');
             return []; // No further requests needed
           } else if (res.status === 'failed') {
