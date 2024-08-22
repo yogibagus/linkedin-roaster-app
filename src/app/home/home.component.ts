@@ -11,7 +11,7 @@ import { Subject, timer, takeUntil, switchMap } from 'rxjs';
   styleUrl: './home.component.css'
 })
 export class HomeComponent implements OnInit {
-  title = 'Linkedin Roaster App';
+  title = 'LinkedIn Roaster App';
   description = 'Get your LinkedIn profile roasted! The LinkedIn Roaster App delivers sharp, no-nonsense feedback that’ll turn your profile from basic to blazing. Dare to get roasted?!';
 
   jobQueue: any = {}; // response from create job queue

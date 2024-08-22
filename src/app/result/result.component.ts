@@ -14,4 +14,8 @@ export class ResultComponent {
     this.receivedData = this.data;
     console.log(this.receivedData);
   }
+
+  print(){
+    window.print();
+  }
 }
